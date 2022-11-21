@@ -14,24 +14,24 @@ module ParamParam
   end
 
   Rules = lambda { |fields, params|
-    result = fields.to_h do |key, fn|
-      value = params.key?(key) ? optionize(params[key]) : Option.None
-      [key, fn.call(value)]
+    results = fields.to_h do |key, fn|
+      option = params.key?(key) ? optionize(params[key]) : Option.None
+      [key, fn.call(option)]
     end
 
-    errors = result.select { |_, v| v.is_a?(Failure) }.transform_values(&:error)
+    errors = results.select { |_, result| result.failure? }.transform_values(&:error)
     if errors.empty?
-      successful_with_values = result.select do |_, v|
-        v.is_a?(Success) && v.value.is_a?(Option::Some)
+      successful_with_values = results.select do |_, result|
+        result.success? && result.value.some?
       end
-      params = successful_with_values.transform_values { |v| v.value.value }
+      params = successful_with_values.transform_values { |result| result.value.value }
       Success.new(params)
     else
       Failure.new(errors)
     end
   }.curry
 
-  AllOf = lambda { |fns, v|
-    fns.reduce(Success.new(v)) { |result, fn| result.is_a?(Failure) ? result : fn.call(result.value) }
+  AllOf = lambda { |fns, option|
+    fns.reduce(Success.new(option)) { |result, fn| result.is_a?(Failure) ? result : fn.call(result.value) }
   }.curry
 end

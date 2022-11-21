@@ -18,78 +18,78 @@ module ParamParam
   NON_INTEGER = :non_integer
   NON_STRING = :non_string
 
-  Optional = lambda { |fn, v|
-    case v
+  Optional = lambda { |fn, option|
+    case option
     in Option::None
-      Success.new(v)
+      Success.new(option)
     in Option::Some
-      fn.call(v)
+      fn.call(option)
     end
   }.curry
 
-  Required = lambda { |fn, v|
-    case v
+  Required = lambda { |fn, option|
+    case option
     in Option::None
       Failure.new(MISSING)
     in Option::Some
-      fn.call(v)
+      fn.call(option)
     end
   }.curry
 
-  IncludedIn = lambda { |collection, v|
-    collection.include?(v.value) ? Success.new(v) : Failure.new(NOT_INCLUDED)
+  IncludedIn = lambda { |collection, option|
+    collection.include?(option.value) ? Success.new(option) : Failure.new(NOT_INCLUDED)
   }.curry
 
-  BlankToNilOr = lambda { |fn, v|
-    v.value.nil? || (v.value.is_a?(String) && v.value.strip.empty?) ? Success.new(Option.Some(nil)) : fn.call(v)
+  BlankToNilOr = lambda { |fn, option|
+    blank?(option.value) ? Success.new(Option.Some(nil)) : fn.call(option)
   }.curry
 
-  NotBlank = lambda { |v|
-    v.value.nil? || (v.value.is_a?(String) && v.value.strip.empty?) ? Failure.new(BLANK) : Success.new(v)
+  NotBlank = lambda { |option|
+    blank?(option.value) ? Failure.new(BLANK) : Success.new(option)
   }
 
-  Any = ->(v) { Success.new(v) }
+  Any = ->(option) { Success.new(option) }
 
-  Gte = ->(limit, v) { v.value >= limit ? Success.new(v) : Failure.new(NOT_GTE) }.curry
+  Gte = ->(limit, option) { option.value >= limit ? Success.new(option) : Failure.new(NOT_GTE) }.curry
 
-  Gt = ->(limit, v) { v.value > limit ? Success.new(v) : Failure.new(NOT_GT) }.curry
+  Gt = ->(limit, option) { option.value > limit ? Success.new(option) : Failure.new(NOT_GT) }.curry
 
-  Lte = ->(limit, v) { v.value <= limit ? Success.new(v) : Failure.new(NOT_LTE) }.curry
+  Lte = ->(limit, option) { option.value <= limit ? Success.new(option) : Failure.new(NOT_LTE) }.curry
 
-  Lt = ->(limit, v) { v.value < limit ? Success.new(v) : Failure.new(NOT_LT) }.curry
+  Lt = ->(limit, option) { option.value < limit ? Success.new(option) : Failure.new(NOT_LT) }.curry
 
-  MaxSize = lambda { |limit, v|
-    v.value.size <= limit ? Success.new(v) : Failure.new(TOO_LONG)
+  MaxSize = lambda { |limit, option|
+    option.value.size <= limit ? Success.new(option) : Failure.new(TOO_LONG)
   }.curry
 
-  Stripped = lambda { |v|
-    Success.new(Option.Some(v.value.strip))
+  Stripped = lambda { |option|
+    Success.new(Option.Some(option.value.strip))
   }
 
-  IsInteger = lambda { |fn, v|
+  IsInteger = lambda { |fn, option|
     begin
-      result = Integer(v.value)
+      integer_value = Integer(option.value)
     rescue StandardError
       return Failure.new(NON_INTEGER)
     end
-    fn.call(Option.Some(result))
+    fn.call(Option.Some(integer_value))
   }.curry
 
-  IsDecimal = lambda { |fn, v|
+  IsDecimal = lambda { |fn, option|
     begin
-      result = Float(v.value)
+      float_value = Float(option.value)
     rescue StandardError
       return Failure.new(NON_DECIMAL)
     end
-    fn.call(Option.Some(result))
+    fn.call(Option.Some(float_value))
   }.curry
 
-  IsBool = lambda { |fn, v|
-    case v
+  IsBool = lambda { |fn, option|
+    case option
     in Option::Some
-      if [true, *TRUE_VALUES].include?(v.value)
+      if [true, *TRUE_VALUES].include?(option.value)
         fn.call(Option.Some(true))
-      elsif [false, *FALSE_VALUES].include?(v.value)
+      elsif [false, *FALSE_VALUES].include?(option.value)
         fn.call(Option.Some(false))
       else
         Failure.new(NON_BOOL)
@@ -99,11 +99,16 @@ module ParamParam
     end
   }.curry
 
-  IsString = lambda { |fn, v|
-    if v.is_a?(Option::Some)
-      fn.call(Option.Some(v.value.to_s))
-    else
+  IsString = lambda { |fn, option|
+    case option
+    in Option::Some
+      fn.call(Option.Some(option.value.to_s))
+    in Option::None
       Failure.new(NON_STRING)
     end
   }.curry
+
+  def self.blank?(value)
+    value.nil? || (value.is_a?(String) && value.strip.empty?)
+  end
 end

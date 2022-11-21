@@ -10,12 +10,28 @@ module ParamParam
       def initialize(value)
         @value = value
       end
+
+      def some?
+        true
+      end
+
+      def none?
+        false
+      end
     end
 
     class None
       include Singleton
 
       def nil?
+        true
+      end
+
+      def some?
+        false
+      end
+
+      def none?
         true
       end
     end
