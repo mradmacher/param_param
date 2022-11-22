@@ -5,61 +5,61 @@ require 'test_helper'
 describe ParamParam::IsInteger do
   let(:rules) do
     ParamParam::Rules.call(
-      field: ParamParam::IsInteger.call(ParamParam::Any)
+      field: ParamParam::IsInteger.call(ParamParam::Any),
     )
   end
 
   it 'complains when field missing' do
-    result = rules.call({})
+    _, errors = rules.call({})
 
-    assert_predicate(result, :failure?)
-    assert_equal(ParamParam::NON_INTEGER, result.error[:field])
+    refute_predicate(errors, :empty?)
+    assert_equal(ParamParam::NON_INTEGER, errors[:field])
   end
 
   it 'complains for nil' do
-    result = rules.call(field: nil)
+    _, errors = rules.call(field: nil)
 
-    assert_predicate(result, :failure?)
-    assert_equal(ParamParam::NON_INTEGER, result.error[:field])
+    refute_predicate(errors, :empty?)
+    assert_equal(ParamParam::NON_INTEGER, errors[:field])
   end
 
   it 'complains for None' do
-    result = rules.call(field: ParamParam::Option.None)
+    _, errors = rules.call(field: ParamParam::Option.None)
 
-    assert_predicate(result, :failure?)
-    assert_equal(ParamParam::NON_INTEGER, result.error[:field])
+    refute_predicate(errors, :empty?)
+    assert_equal(ParamParam::NON_INTEGER, errors[:field])
   end
 
   it 'accepts integer values' do
-    result = rules.call(field: 4)
+    params, errors = rules.call(field: 4)
 
-    assert_predicate(result, :success?)
-    assert_equal(4, result.value[:field])
+    assert_predicate(errors, :empty?)
+    assert_equal(4, params[:field])
   end
 
   it 'accepts integer values passed as strings' do
-    result = rules.call(field: '4')
+    params, errors = rules.call(field: '4')
 
-    assert_predicate(result, :success?)
-    assert_equal(4, result.value[:field])
+    assert_predicate(errors, :empty?)
+    assert_equal(4, params[:field])
   end
 
   it 'accepts integer values passed as strings with spaces' do
-    result = rules.call(field: '   4   ')
+    params, errors = rules.call(field: '   4   ')
 
-    assert_predicate(result, :success?)
-    assert_equal(4, result.value[:field])
+    assert_predicate(errors, :empty?)
+    assert_equal(4, params[:field])
   end
 
   it 'complains for strings not convertable to integer' do
-    result = rules.call(field: '4.0')
+    _, errors = rules.call(field: '4.0')
 
-    assert_predicate(result, :failure?)
-    assert_equal(ParamParam::NON_INTEGER, result.error[:field])
+    refute_predicate(errors, :empty?)
+    assert_equal(ParamParam::NON_INTEGER, errors[:field])
 
-    result = rules.call(field: '4 apples')
+    _, errors = rules.call(field: '4 apples')
 
-    assert_predicate(result, :failure?)
-    assert_equal(ParamParam::NON_INTEGER, result.error[:field])
+    refute_predicate(errors, :empty?)
+    assert_equal(ParamParam::NON_INTEGER, errors[:field])
   end
 end

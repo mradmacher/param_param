@@ -5,14 +5,14 @@ require 'test_helper'
 describe ParamParam::BlankToNilOr do
   let(:rules) do
     ParamParam::Rules.call(
-      field: ParamParam::Stripped
+      field: ParamParam::Stripped,
     )
   end
 
   it 'removes leading and trailing spaces from string' do
-    result = rules.call(field: ' the  core   ')
+    params, errors = rules.call(field: ' the  core   ')
 
-    assert_predicate result, :success?
-    assert_equal 'the  core', result.value[:field]
+    assert_predicate(errors, :empty?)
+    assert_equal('the  core', params[:field])
   end
 end

@@ -4,6 +4,15 @@ require 'param_param/option'
 require 'param_param/result'
 require 'param_param/rules'
 
+##
+# The main purpose of this module is to convert hash data
+# (e.g. form data in a web application) applying a chain of rules
+# to each value in the provided hash.
+#
+# If returns two hashes:
+# - first with successfully converted values
+# - second with errors that prevented applying the rules.
+
 module ParamParam
   def self.optionize(value)
     if value.is_a?(Option::Some) || value.is_a?(Option::None)
@@ -20,15 +29,11 @@ module ParamParam
     end
 
     errors = results.select { |_, result| result.failure? }.transform_values(&:error)
-    if errors.empty?
-      successful_with_values = results.select do |_, result|
-        result.success? && result.value.some?
-      end
-      params = successful_with_values.transform_values { |result| result.value.value }
-      Success.new(params)
-    else
-      Failure.new(errors)
+    successful_with_values = results.select do |_, result|
+      result.success? && result.value.some?
     end
+    params = successful_with_values.transform_values { |result| result.value.value }
+    [params, errors]
   }.curry
 
   AllOf = lambda { |fns, option|

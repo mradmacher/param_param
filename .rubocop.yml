@@ -6,6 +6,9 @@ AllCops:
   TargetRubyVersion: 3.0
   NewCops: enable
 
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
 Metrics/BlockLength:
   CountAsOne: [array, hash]
   Exclude:

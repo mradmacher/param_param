@@ -3,68 +3,72 @@
 require 'test_helper'
 
 describe ParamParam do
-  describe ParamParam::Required do
-    let(:rules) do
-      ParamParam::Rules.call(
-        field: ParamParam::Required.call(ParamParam::Any)
-      )
-    end
+  let(:i_will_fail) { ->(_option) { ParamParam::Failure.new(:some_reason) } }
+  let(:i_will_succeed) { ->(option) { ParamParam::Success.new(option) } }
 
-    it 'fails when value is None' do
-      result = rules.call(field: ParamParam::Option.None)
+  it 'returns params that failed and succeeded' do
+    rules = ParamParam::Rules.call(
+      field1: i_will_fail,
+      field2: i_will_succeed,
+      field3: i_will_fail,
+      field4: i_will_succeed,
+    )
+    params, errors = rules.call(
+      field1: 1,
+      field2: 2,
+      field3: 3,
+      field4: 4,
+    )
 
-      assert_predicate result, :failure?
-      assert_equal :missing, result.error[:field]
-    end
-
-    it 'fails when field is missing' do
-      result = rules.call(other_field: 'some value')
-
-      assert_predicate result, :failure?
-      assert_equal :missing, result.error[:field]
-    end
-
-    it 'succeeds when value is nil' do
-      result = rules.call(field: nil)
-
-      assert_predicate result, :success?
-      assert_nil result.value[:field]
-    end
+    assert_equal(%i[field2 field4], params.keys)
+    assert_equal(%i[field1 field3], errors.keys)
+    assert_equal(:some_reason, errors[:field1])
+    assert_equal(2, params[:field2])
+    assert_equal(:some_reason, errors[:field3])
+    assert_equal(4, params[:field4])
   end
 
-  describe ParamParam::Optional do
-    let(:rules) do
-      ParamParam::Rules.call(
-        field: ParamParam::Optional.call(ParamParam::Any)
-      )
-    end
+  it 'returns empty errors when all succeed' do
+    rules = ParamParam::Rules.call(
+      field1: i_will_succeed,
+      field2: i_will_succeed,
+      field3: i_will_succeed,
+      field4: i_will_succeed,
+    )
+    params, errors = rules.call(
+      field1: 1,
+      field2: 2,
+      field3: 3,
+      field4: 4,
+    )
 
-    it 'succeeds when value is None' do
-      result = rules.call(field: ParamParam::Option.None)
+    assert_predicate(errors, :empty?)
+    assert_equal(%i[field1 field2 field3 field4], params.keys)
+    assert_equal(1, params[:field1])
+    assert_equal(2, params[:field2])
+    assert_equal(3, params[:field3])
+    assert_equal(4, params[:field4])
+  end
 
-      assert_predicate result, :success?
-      refute result.value.key?(:field)
-    end
+  it 'returns empty params when all fail' do
+    rules = ParamParam::Rules.call(
+      field1: i_will_fail,
+      field2: i_will_fail,
+      field3: i_will_fail,
+      field4: i_will_fail,
+    )
+    params, errors = rules.call(
+      field1: 1,
+      field2: 2,
+      field3: 3,
+      field4: 4,
+    )
 
-    it 'succeeds when field is missing' do
-      result = rules.call(other_field: 'some value')
-
-      assert_predicate result, :success?
-      refute result.value.key?(:field)
-    end
-
-    it 'succeeds when value is nil' do
-      result = rules.call(field: nil)
-
-      assert_predicate result, :success?
-      assert_nil result.value[:field]
-    end
-
-    it 'succeeds when value is present' do
-      result = rules.call(field: 'some value')
-
-      assert_predicate result, :success?
-      assert_equal 'some value', result.value[:field]
-    end
+    assert_predicate(params, :empty?)
+    assert_equal(%i[field1 field2 field3 field4], errors.keys)
+    assert_equal(:some_reason, errors[:field1])
+    assert_equal(:some_reason, errors[:field2])
+    assert_equal(:some_reason, errors[:field3])
+    assert_equal(:some_reason, errors[:field4])
   end
 end
