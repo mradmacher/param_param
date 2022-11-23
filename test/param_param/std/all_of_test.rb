@@ -5,7 +5,7 @@ require 'test_helper'
 describe ParamParam::AllOf do
   let(:rules) do
     ParamParam::Rules.call(
-      field: ParamParam::AllOf.call([ParamParam::Gt.call(0), ParamParam::Lt.call(10)]),
+      field: ParamParam::AllOf.call([ParamParam::Std::Gt.call(0), ParamParam::Std::Lt.call(10)]),
     )
   end
 
@@ -20,11 +20,11 @@ describe ParamParam::AllOf do
     _, errors = rules.call(field: -1)
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::NOT_GT, errors[:field])
+    assert_equal(ParamParam::Std::NOT_GT, errors[:field])
 
     _, errors = rules.call(field: 11)
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::NOT_LT, errors[:field])
+    assert_equal(ParamParam::Std::NOT_LT, errors[:field])
   end
 end

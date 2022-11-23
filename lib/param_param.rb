@@ -2,7 +2,6 @@
 
 require 'param_param/option'
 require 'param_param/result'
-require 'param_param/rules'
 
 ##
 # The main purpose of this module is to convert hash data

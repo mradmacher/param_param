@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::MaxSize do
+describe ParamParam::Std::MaxSize do
   let(:rules) do
     ParamParam::Rules.call(
-      field: ParamParam::MaxSize.call(10),
+      field: ParamParam::Std::MaxSize.call(10),
     )
   end
 
@@ -20,7 +20,7 @@ describe ParamParam::MaxSize do
     _, errors = rules.call(field: '12345678910')
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::TOO_LONG, errors[:field])
+    assert_equal(ParamParam::Std::TOO_LONG, errors[:field])
   end
 
   it 'accepts arrays not longer than required size' do
@@ -34,6 +34,6 @@ describe ParamParam::MaxSize do
     _, errors = rules.call(field: %w[0 1 2 3 4 5 6 7 8 9 10])
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::TOO_LONG, errors[:field])
+    assert_equal(ParamParam::Std::TOO_LONG, errors[:field])
   end
 end
