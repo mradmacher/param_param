@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module ParamParam
+  # A collection of some standard rules.
   module Std
     TRUE_VALUES = %w[1 on On ON t true True TRUE T y yes Yes YES Y].freeze
     FALSE_VALUES = %w[0 off Off OFF f false False FALSE F n no No NO N].freeze
@@ -22,7 +23,7 @@ module ParamParam
     Optional = lambda { |fn, option|
       case option
       in Option::None
-        Success.new(option)
+        Result::Success.new(option)
       in Option::Some
         fn.call(option)
       end
@@ -31,47 +32,47 @@ module ParamParam
     Required = lambda { |fn, option|
       case option
       in Option::None
-        Failure.new(MISSING)
+        Result::Failure.new(MISSING)
       in Option::Some
         fn.call(option)
       end
     }.curry
 
     IncludedIn = lambda { |collection, option|
-      collection.include?(option.value) ? Success.new(option) : Failure.new(NOT_INCLUDED)
+      collection.include?(option.value) ? Result::Success.new(option) : Result::Failure.new(NOT_INCLUDED)
     }.curry
 
     BlankToNilOr = lambda { |fn, option|
-      blank?(option.value) ? Success.new(Option.Some(nil)) : fn.call(option)
+      blank?(option.value) ? Result::Success.new(Option.Some(nil)) : fn.call(option)
     }.curry
 
     NotBlank = lambda { |option|
-      blank?(option.value) ? Failure.new(BLANK) : Success.new(option)
+      blank?(option.value) ? Result::Failure.new(BLANK) : Result::Success.new(option)
     }
 
-    Any = ->(option) { Success.new(option) }
+    Any = ->(option) { Result::Success.new(option) }
 
-    Gte = ->(limit, option) { option.value >= limit ? Success.new(option) : Failure.new(NOT_GTE) }.curry
+    Gte = ->(limit, option) { option.value >= limit ? Result::Success.new(option) : Result::Failure.new(NOT_GTE) }.curry
 
-    Gt = ->(limit, option) { option.value > limit ? Success.new(option) : Failure.new(NOT_GT) }.curry
+    Gt = ->(limit, option) { option.value > limit ? Result::Success.new(option) : Result::Failure.new(NOT_GT) }.curry
 
-    Lte = ->(limit, option) { option.value <= limit ? Success.new(option) : Failure.new(NOT_LTE) }.curry
+    Lte = ->(limit, option) { option.value <= limit ? Result::Success.new(option) : Result::Failure.new(NOT_LTE) }.curry
 
-    Lt = ->(limit, option) { option.value < limit ? Success.new(option) : Failure.new(NOT_LT) }.curry
+    Lt = ->(limit, option) { option.value < limit ? Result::Success.new(option) : Result::Failure.new(NOT_LT) }.curry
 
     MaxSize = lambda { |limit, option|
-      option.value.size <= limit ? Success.new(option) : Failure.new(TOO_LONG)
+      option.value.size <= limit ? Result::Success.new(option) : Result::Failure.new(TOO_LONG)
     }.curry
 
     Stripped = lambda { |option|
-      Success.new(Option.Some(option.value.strip))
+      Result::Success.new(Option.Some(option.value.strip))
     }
 
     IsInteger = lambda { |fn, option|
       begin
         integer_value = Integer(option.value)
       rescue StandardError
-        return Failure.new(NON_INTEGER)
+        return Result::Failure.new(NON_INTEGER)
       end
       fn.call(Option.Some(integer_value))
     }.curry
@@ -80,7 +81,7 @@ module ParamParam
       begin
         float_value = Float(option.value)
       rescue StandardError
-        return Failure.new(NON_DECIMAL)
+        return Result::Failure.new(NON_DECIMAL)
       end
       fn.call(Option.Some(float_value))
     }.curry
@@ -93,10 +94,10 @@ module ParamParam
         elsif [false, *FALSE_VALUES].include?(option.value)
           fn.call(Option.Some(false))
         else
-          Failure.new(NON_BOOL)
+          Result::Failure.new(NON_BOOL)
         end
       in Option::None
-        Failure.new(NON_BOOL)
+        Result::Failure.new(NON_BOOL)
       end
     }.curry
 
@@ -105,7 +106,7 @@ module ParamParam
       in Option::Some
         fn.call(Option.Some(option.value.to_s))
       in Option::None
-        Failure.new(NON_STRING)
+        Result::Failure.new(NON_STRING)
       end
     }.curry
 

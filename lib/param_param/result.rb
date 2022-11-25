@@ -1,39 +1,47 @@
 # frozen_string_literal: true
 
 module ParamParam
-  class Result
-    attr_reader :value
+  # Defines operation result pattern.
+  # A result can be a success or a failure and has some value.
+  module Result
+    # Describes successful result.
+    class Success
+      # A value related to the success.
+      attr_reader :value
 
-    def initialize(value)
-      @value = value
+      def initialize(value)
+        @value = value
+      end
+
+      # Returns +true+.
+      def success?
+        true
+      end
+
+      # Returns +false+.
+      def failure?
+        false
+      end
     end
 
-    def failure?
-      false
-    end
+    # Describes failed result.
+    class Failure
+      # An error related to the failure.
+      attr_reader :error
 
-    def success?
-      false
-    end
-  end
+      def initialize(error)
+        @error = error
+      end
 
-  class Success < Result
-    def success?
-      true
-    end
-  end
+      # Returns +false+.
+      def success?
+        false
+      end
 
-  class Failure < Result
-    def failure?
-      true
-    end
-
-    def error
-      @value
-    end
-
-    def value
-      raise '`value` does not exist for failure'
+      # Returns +true+.
+      def failure?
+        true
+      end
     end
   end
 end

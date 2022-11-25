@@ -3,8 +3,8 @@
 require 'test_helper'
 
 describe ParamParam do
-  let(:i_will_fail) { ->(_option) { ParamParam::Failure.new(:some_reason) } }
-  let(:i_will_succeed) { ->(option) { ParamParam::Success.new(option) } }
+  let(:i_will_fail) { ->(_option) { ParamParam::Result::Failure.new(:some_reason) } }
+  let(:i_will_succeed) { ->(option) { ParamParam::Result::Success.new(option) } }
 
   it 'returns params that failed and succeeded' do
     rules = ParamParam::Rules.call(
