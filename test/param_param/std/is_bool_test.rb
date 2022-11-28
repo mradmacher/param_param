@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::Std::IsBool do
+describe ParamParam::Std.bool do
   let(:rules) do
-    ParamParam::Rules.call(
-      field: ParamParam::Std::IsBool.call(ParamParam::Std::Any),
+    ParamParam.define.call(
+      field: ParamParam::Std.bool.call(ParamParam::Std.any),
     )
   end
 

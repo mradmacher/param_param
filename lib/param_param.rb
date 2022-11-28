@@ -16,13 +16,14 @@ require 'param_param/result'
 #     include ParamParam
 #     include ParamParam::Std
 #
-#     UserParams = Rules.(
-#       name: Required.(IsString.(AllOf.([NotNil, Stripped, MaxSize.(50)]))),
-#       age: Optional.(IsInteger.(Gt.(0))),
+#     Rules = define.(
+#       name: required.(string.(all_of.([not_nil, stripped, max_size.(50)]))),
+#       admin: required.(bool.(any)),
+#       age: optional.(integer.(gt.(0))),
 #     )
 #
 #     def create(name:, age:)
-#       params, errors = UserParams.(name: name, age: age)
+#       params, errors = Rules.(name: name, age: age)
 #       throw errors unless errors.empty?
 #
 #       # do something with params
@@ -39,36 +40,44 @@ module ParamParam
     end
   end
 
-  # Lambda that allows defining a set of rules and bind them to symbols.
+  # Returns lambda that allows defining a set of rules and bind them to symbols.
   # Later those rules can be applied to parameters provided in a for of a hash.
   # Each rule defined for a given key processes a value related to the same key in provided parameters.
+  #   lambda { |rules, params| ... }
   #
-  # It returns two hashes:
+  # The lambda returns two hashes:
   # - if a value related to a key can be procesed by the rules,
   #   the result is bound to the key and added to the first hash
   # - if a rule can't be applied to a value,
   #   the error is bound to the key and added to the second hash
   #
-  # Each rule needs to be a lambda taking +Option+ as a parameter and returning either:
-  # - +Result::Success+ with processed option
-  # - +Result::Failure+ with an error
-  Rules = lambda { |rules, params|
-    results = rules.to_h do |key, fn|
-      option = params.key?(key) ? optionize(params[key]) : Option.None
-      [key, fn.call(option)]
-    end
+  # Each rule needs to be a lambda taking +Option+ as the only or the last parameter and returning either:
+  # - +ParamParam::Success+ with processed option
+  # - +ParamParam::Failure+ with an error
+  def self.define
+    lambda { |rules, params|
+      results = rules.to_h do |key, fn|
+        option = params.key?(key) ? optionize(params[key]) : Option.None
+        [key, fn.call(option)]
+      end
 
-    errors = results.select { |_, result| result.failure? }.transform_values(&:error)
-    successful_with_values = results.select do |_, result|
-      result.success? && result.value.some?
-    end
-    params = successful_with_values.transform_values { |result| result.value.value }
-    [params, errors]
-  }.curry
+      errors = results.select { |_, result| result.failure? }
+                      .transform_values(&:error)
+      params = results.select { |_, result| result.success? && result.value.some? }
+                      .transform_values { |result| result.value.value }
+      [params, errors]
+    }.curry
+  end
 
-  # Lambda that allows defining a chain of rules that will be applied one by one to value processed by a previous rule.
+  # It return lambda that allows defining a chain of rules that will be applied one by one
+  # to value processed by a previous rule.
+  #
+  # Returns:
+  #   lambda { |fns, option| ... }
   # If some rule fails the chain is broken and value stops being processed.
-  AllOf = lambda { |fns, option|
-    fns.reduce(Result::Success.new(option)) { |result, fn| result.failure? ? result : fn.call(result.value) }
-  }.curry
+  def self.all_of
+    lambda { |fns, option|
+      fns.reduce(Success.new(option)) { |result, fn| result.failure? ? result : fn.call(result.value) }
+    }.curry
+  end
 end

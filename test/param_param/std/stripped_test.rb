@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::Std::BlankToNilOr do
+describe ParamParam::Std.stripped do
   let(:rules) do
-    ParamParam::Rules.call(
-      field: ParamParam::Std::Stripped,
+    ParamParam.define.call(
+      field: ParamParam::Std.stripped,
     )
   end
 

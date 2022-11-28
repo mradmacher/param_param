@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::AllOf do
+describe ParamParam.all_of do
   let(:rules) do
-    ParamParam::Rules.call(
-      field: ParamParam::AllOf.call([ParamParam::Std::Gt.call(0), ParamParam::Std::Lt.call(10)]),
+    ParamParam.define.call(
+      field: ParamParam.all_of.call([ParamParam::Std.gt.call(0), ParamParam::Std.lt.call(10)]),
     )
   end
 

@@ -4,11 +4,11 @@ require 'test_helper'
 
 describe 'Comparisons' do
   let(:rules) do
-    ParamParam::Rules.call(
-      field_gte: ParamParam::Std::Gte.call(0),
-      field_gt: ParamParam::Std::Gt.call(0),
-      field_lte: ParamParam::Std::Lte.call(0),
-      field_lt: ParamParam::Std::Lt.call(0),
+    ParamParam.define.call(
+      field_gte: ParamParam::Std.gte.call(0),
+      field_gt: ParamParam::Std.gt.call(0),
+      field_lte: ParamParam::Std.lte.call(0),
+      field_lt: ParamParam::Std.lt.call(0),
     )
   end
 

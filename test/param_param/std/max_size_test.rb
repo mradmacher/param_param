@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::Std::MaxSize do
+describe ParamParam::Std.max_size do
   let(:rules) do
-    ParamParam::Rules.call(
-      field: ParamParam::Std::MaxSize.call(10),
+    ParamParam.define.call(
+      field: ParamParam::Std.max_size.call(10),
     )
   end
 

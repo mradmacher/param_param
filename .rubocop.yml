@@ -13,3 +13,18 @@ Metrics/BlockLength:
   CountAsOne: [array, hash]
   Exclude:
     - "test/**/*"
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 23
+
+Metrics/CyclomaticComplexity:
+  Max: 8
+
+Lint/MissingSuper:
+  Enabled: false

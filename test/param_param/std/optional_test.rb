@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::Std::Optional do
+describe ParamParam::Std.optional do
   let(:rules) do
-    ParamParam::Rules.call(
-      field: ParamParam::Std::Optional.call(ParamParam::Std::Any),
+    ParamParam.define.call(
+      field: ParamParam::Std.optional.call(ParamParam::Std.any),
     )
   end
 

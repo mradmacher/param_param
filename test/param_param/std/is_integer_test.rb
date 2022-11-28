@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::Std::IsInteger do
+describe ParamParam::Std.integer do
   let(:rules) do
-    ParamParam::Rules.call(
-      field: ParamParam::Std::IsInteger.call(ParamParam::Std::Any),
+    ParamParam.define.call(
+      field: ParamParam::Std.integer.call(ParamParam::Std.any),
     )
   end
 

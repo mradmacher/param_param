@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::Std::IsString do
+describe ParamParam::Std.string do
   let(:rules) do
-    ParamParam::Rules.call(
-      field: ParamParam::Std::IsString.call(ParamParam::Std::Any),
+    ParamParam.define.call(
+      field: ParamParam::Std.string.call(ParamParam::Std.any),
     )
   end
 

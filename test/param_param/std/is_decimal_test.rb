@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::Std::IsDecimal do
+describe ParamParam::Std.decimal do
   let(:rules) do
-    ParamParam::Rules.call(
-      field: ParamParam::Std::IsDecimal.call(ParamParam::Std::Any),
+    ParamParam.define.call(
+      field: ParamParam::Std.decimal.call(ParamParam::Std.any),
     )
   end
 

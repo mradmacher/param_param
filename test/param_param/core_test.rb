@@ -3,11 +3,11 @@
 require 'test_helper'
 
 describe ParamParam do
-  let(:i_will_fail) { ->(_option) { ParamParam::Result::Failure.new(:some_reason) } }
-  let(:i_will_succeed) { ->(option) { ParamParam::Result::Success.new(option) } }
+  let(:i_will_fail) { ->(_option) { ParamParam::Failure.new(:some_reason) } }
+  let(:i_will_succeed) { ->(option) { ParamParam::Success.new(option) } }
 
   it 'returns params that failed and succeeded' do
-    rules = ParamParam::Rules.call(
+    rules = ParamParam.define.call(
       field1: i_will_fail,
       field2: i_will_succeed,
       field3: i_will_fail,
@@ -29,7 +29,7 @@ describe ParamParam do
   end
 
   it 'returns empty errors when all succeed' do
-    rules = ParamParam::Rules.call(
+    rules = ParamParam.define.call(
       field1: i_will_succeed,
       field2: i_will_succeed,
       field3: i_will_succeed,
@@ -51,7 +51,7 @@ describe ParamParam do
   end
 
   it 'returns empty params when all fail' do
-    rules = ParamParam::Rules.call(
+    rules = ParamParam.define.call(
       field1: i_will_fail,
       field2: i_will_fail,
       field3: i_will_fail,
