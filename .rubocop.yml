@@ -14,9 +14,6 @@ Metrics/BlockLength:
   Exclude:
     - "test/**/*"
 
-Metrics/ModuleLength:
-  Enabled: false
-
 Metrics/MethodLength:
   Enabled: false
 

@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::Std.blank_to_nil_or do
+describe ParamParam.blank_to_nil_or do
   let(:rules) do
     ParamParam.define.call(
-      field: ParamParam::Std.blank_to_nil_or.call(ParamParam::Std.any),
+      field: ParamParam.blank_to_nil_or.call(ParamParam.any),
     )
   end
 

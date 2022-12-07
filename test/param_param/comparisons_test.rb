@@ -5,10 +5,10 @@ require 'test_helper'
 describe 'Comparisons' do
   let(:rules) do
     ParamParam.define.call(
-      field_gte: ParamParam::Std.gte.call(0),
-      field_gt: ParamParam::Std.gt.call(0),
-      field_lte: ParamParam::Std.lte.call(0),
-      field_lt: ParamParam::Std.lt.call(0),
+      field_gte: ParamParam.gte.call(0),
+      field_gt: ParamParam.gt.call(0),
+      field_lte: ParamParam.lte.call(0),
+      field_lt: ParamParam.lt.call(0),
     )
   end
 
@@ -51,9 +51,9 @@ describe 'Comparisons' do
     )
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::Std::NOT_GTE, errors[:field_gte])
-    assert_equal(ParamParam::Std::NOT_GT, errors[:field_gt])
-    assert_equal(ParamParam::Std::NOT_LTE, errors[:field_lte])
-    assert_equal(ParamParam::Std::NOT_LT, errors[:field_lt])
+    assert_equal(ParamParam::NOT_GTE, errors[:field_gte])
+    assert_equal(ParamParam::NOT_GT, errors[:field_gt])
+    assert_equal(ParamParam::NOT_LTE, errors[:field_lte])
+    assert_equal(ParamParam::NOT_LT, errors[:field_lt])
   end
 end

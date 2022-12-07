@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::Std.required do
+describe ParamParam.required do
   let(:rules) do
     ParamParam.define.call(
-      field: ParamParam::Std.required.call(ParamParam::Std.any),
+      field: ParamParam.required.call(ParamParam.any),
     )
   end
 
@@ -13,14 +13,14 @@ describe ParamParam::Std.required do
     _, errors = rules.call(field: ParamParam::Option.None)
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::Std::MISSING, errors[:field])
+    assert_equal(ParamParam::MISSING, errors[:field])
   end
 
   it 'fails when field is missing' do
     _, errors = rules.call(other_field: 'some value')
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::Std::MISSING, errors[:field])
+    assert_equal(ParamParam::MISSING, errors[:field])
   end
 
   it 'succeeds when value is nil' do

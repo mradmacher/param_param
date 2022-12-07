@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::Std.integer do
+describe ParamParam.integer do
   let(:rules) do
     ParamParam.define.call(
-      field: ParamParam::Std.integer.call(ParamParam::Std.any),
+      field: ParamParam.integer.call(ParamParam.any),
     )
   end
 
@@ -13,21 +13,21 @@ describe ParamParam::Std.integer do
     _, errors = rules.call({})
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::Std::NON_INTEGER, errors[:field])
+    assert_equal(ParamParam::NON_INTEGER, errors[:field])
   end
 
   it 'complains for nil' do
     _, errors = rules.call(field: nil)
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::Std::NON_INTEGER, errors[:field])
+    assert_equal(ParamParam::NON_INTEGER, errors[:field])
   end
 
   it 'complains for None' do
     _, errors = rules.call(field: ParamParam::Option.None)
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::Std::NON_INTEGER, errors[:field])
+    assert_equal(ParamParam::NON_INTEGER, errors[:field])
   end
 
   it 'accepts integer values' do
@@ -55,11 +55,11 @@ describe ParamParam::Std.integer do
     _, errors = rules.call(field: '4.0')
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::Std::NON_INTEGER, errors[:field])
+    assert_equal(ParamParam::NON_INTEGER, errors[:field])
 
     _, errors = rules.call(field: '4 apples')
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::Std::NON_INTEGER, errors[:field])
+    assert_equal(ParamParam::NON_INTEGER, errors[:field])
   end
 end

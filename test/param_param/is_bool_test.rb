@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::Std.bool do
+describe ParamParam.bool do
   let(:rules) do
     ParamParam.define.call(
-      field: ParamParam::Std.bool.call(ParamParam::Std.any),
+      field: ParamParam.bool.call(ParamParam.any),
     )
   end
 
@@ -13,21 +13,21 @@ describe ParamParam::Std.bool do
     _, errors = rules.call({})
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::Std::NON_BOOL, errors[:field])
+    assert_equal(ParamParam::NON_BOOL, errors[:field])
   end
 
   it 'complains for nil' do
     _, errors = rules.call(field: nil)
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::Std::NON_BOOL, errors[:field])
+    assert_equal(ParamParam::NON_BOOL, errors[:field])
   end
 
   it 'complains for None' do
     _, errors = rules.call(field: ParamParam::Option.None)
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::Std::NON_BOOL, errors[:field])
+    assert_equal(ParamParam::NON_BOOL, errors[:field])
   end
 
   it 'is true for true' do

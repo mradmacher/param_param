@@ -2,10 +2,10 @@
 
 require 'test_helper'
 
-describe ParamParam::Std.string do
+describe ParamParam.string do
   let(:rules) do
     ParamParam.define.call(
-      field: ParamParam::Std.string.call(ParamParam::Std.any),
+      field: ParamParam.string.call(ParamParam.any),
     )
   end
 
@@ -13,7 +13,7 @@ describe ParamParam::Std.string do
     _, errors = rules.call({})
 
     refute_predicate(errors, :empty?)
-    assert_equal ParamParam::Std::NON_STRING, errors[:field]
+    assert_equal ParamParam::NON_STRING, errors[:field]
   end
 
   it 'converts nil to empty string' do
@@ -27,7 +27,7 @@ describe ParamParam::Std.string do
     _, errors = rules.call(field: ParamParam::Option.None)
 
     refute_predicate(errors, :empty?)
-    assert_equal ParamParam::Std::NON_STRING, errors[:field]
+    assert_equal ParamParam::NON_STRING, errors[:field]
   end
 
   it 'converts numbers to strings' do
