@@ -4,9 +4,11 @@ source 'https://rubygems.org'
 
 gemspec
 
-group :development do
+group :test do
   gem 'minitest'
-  gem 'minitest-rg'
+end
+
+group :development do
   gem 'rake'
   gem 'rubocop'
   gem 'rubocop-minitest'

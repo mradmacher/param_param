@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'param_param/option'
+require 'optiomist'
 require 'param_param/result'
 require 'param_param/std'
 
@@ -33,13 +33,13 @@ module ParamParam
   MISSING = :missing
   BLANK = :blank
 
-  # Converts provided value to +Options::Some+.
-  # If the value is already +Option::Some+ or +Option::None+ returns it untouched.
+  # Converts provided value to +Optiomist::Some+.
+  # If the value is already +Optiomist::Some+ or +Optiomist::None+ returns it untouched.
   def self.optionize(value)
-    if value.is_a?(Option::Some) || value.is_a?(Option::None)
+    if value.is_a?(Optiomist::Some) || value.is_a?(Optiomist::None)
       value
     else
-      Option.Some(value)
+      Optiomist.some(value)
     end
   end
 
@@ -59,13 +59,13 @@ module ParamParam
   # - if a rule can't be applied to a value,
   #   the error is bound to the key and added to the second hash
   #
-  # Each rule needs to be a lambda taking +Option+ as the only or the last parameter and returning either:
+  # Each rule needs to be a lambda taking +Optiomist+ as the only or the last parameter and returning either:
   # - +ParamParam::Success+ with processed option
   # - +ParamParam::Failure+ with an error
   def self.define
     lambda { |rules, params|
       results = rules.to_h do |key, fn|
-        option = params.key?(key) ? optionize(params[key]) : Option.None
+        option = params.key?(key) ? optionize(params[key]) : Optiomist.none
         [key, fn.call(option)]
       end
 
@@ -102,14 +102,14 @@ module ParamParam
   # Returns
   #  lambda { |fn, option| ... }.
   #
-  # If +option+ is the +Option::None+ it succeeds causing the parameter not to be included in the final result.
+  # If +option+ is the +Optiomist::None+ it succeeds causing the parameter not to be included in the final result.
   # Otherwise executes the funciton +fn+ for the option.
   def self.optional
     lambda { |fn, option|
       case option
-      in Option::None
+      in Optiomist::None
         Success.new(option)
-      in Option::Some
+      in Optiomist::Some
         fn.call(option)
       end
     }.curry
@@ -120,13 +120,13 @@ module ParamParam
   # Returns
   #  lambda { |fn, option| ... }.
   #
-  # If +option+ is a +Option::None+ it fails otherwise executes the funciton +fn+ for the option.
+  # If +option+ is a +Optiomist::None+ it fails otherwise executes the funciton +fn+ for the option.
   def self.required
     lambda { |fn, option|
       case option
-      in Option::None
+      in Optiomist::None
         Failure.new(MISSING)
-      in Option::Some
+      in Optiomist::Some
         fn.call(option)
       end
     }.curry
@@ -141,7 +141,7 @@ module ParamParam
   # otherwise executes provided function for the +option+.
   def self.blank_to_nil_or
     lambda { |fn, option|
-      blank?(option.value) ? Success.new(Option.Some(nil)) : fn.call(option)
+      blank?(option.value) ? Success.new(Optiomist.some(nil)) : fn.call(option)
     }.curry
   end
 

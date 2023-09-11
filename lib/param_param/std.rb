@@ -89,7 +89,7 @@ module ParamParam
   #
   # Removes leading and trailing spaces from string provided in +option+'s value.
   def self.stripped
-    ->(option) { Success.new(Option.Some(option.value.strip)) }
+    ->(option) { Success.new(Optiomist.some(option.value.strip)) }
   end
 
   # Returns
@@ -105,7 +105,7 @@ module ParamParam
       rescue StandardError
         return Failure.new(NON_INTEGER)
       end
-      fn.call(Option.Some(integer_value))
+      fn.call(Optiomist.some(integer_value))
     }.curry
   end
 
@@ -122,7 +122,7 @@ module ParamParam
       rescue StandardError
         return Failure.new(NON_DECIMAL)
       end
-      fn.call(Option.Some(float_value))
+      fn.call(Optiomist.some(float_value))
     }.curry
   end
 
@@ -135,15 +135,15 @@ module ParamParam
   def self.bool
     lambda { |fn, option|
       case option
-      in Option::Some
+      in Optiomist::Some
         if [true, *TRUE_VALUES].include?(option.value)
-          fn.call(Option.Some(true))
+          fn.call(Optiomist.some(true))
         elsif [false, *FALSE_VALUES].include?(option.value)
-          fn.call(Option.Some(false))
+          fn.call(Optiomist.some(false))
         else
           Failure.new(NON_BOOL)
         end
-      in Option::None
+      in Optiomist::None
         Failure.new(NON_BOOL)
       end
     }.curry
@@ -158,9 +158,9 @@ module ParamParam
   def self.string
     lambda { |fn, option|
       case option
-      in Option::Some
-        fn.call(Option.Some(option.value.to_s))
-      in Option::None
+      in Optiomist::Some
+        fn.call(Optiomist.some(option.value.to_s))
+      in Optiomist::None
         Failure.new(NON_STRING)
       end
     }.curry

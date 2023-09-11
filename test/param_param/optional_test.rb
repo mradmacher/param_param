@@ -10,7 +10,7 @@ describe ParamParam.optional do
   end
 
   it 'succeeds when value is None' do
-    params, errors = rules.call(field: ParamParam::Option.None)
+    params, errors = rules.call(field: Optiomist.none)
 
     assert_predicate(errors, :empty?)
     refute(params.key?(:field))

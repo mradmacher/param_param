@@ -24,7 +24,7 @@ describe ParamParam.bool do
   end
 
   it 'complains for None' do
-    _, errors = rules.call(field: ParamParam::Option.None)
+    _, errors = rules.call(field: Optiomist.none)
 
     refute_predicate(errors, :empty?)
     assert_equal(ParamParam::NON_BOOL, errors[:field])

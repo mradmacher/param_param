@@ -10,7 +10,7 @@ describe ParamParam.required do
   end
 
   it 'fails when value is None' do
-    _, errors = rules.call(field: ParamParam::Option.None)
+    _, errors = rules.call(field: Optiomist.none)
 
     refute_predicate(errors, :empty?)
     assert_equal(ParamParam::MISSING, errors[:field])
