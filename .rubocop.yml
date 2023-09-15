@@ -9,12 +9,18 @@ AllCops:
 Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: comma
 
+Style/LambdaCall:
+  Enabled: false
+
 Metrics/BlockLength:
   CountAsOne: [array, hash]
   Exclude:
     - "test/**/*"
 
 Metrics/MethodLength:
+  Enabled: false
+
+Metrics/ModuleLength:
   Enabled: false
 
 Metrics/AbcSize:

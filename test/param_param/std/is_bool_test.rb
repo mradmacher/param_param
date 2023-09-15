@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require 'test_std_helper'
 
-describe ParamParam.bool do
+describe 'ParamParam::Std.bool' do
   let(:rules) do
-    ParamParam.define.call(
-      field: ParamParam.bool.call(ParamParam.any),
+    PPX.define.(
+      field: PPX.bool.call(PPX.any),
     )
   end
 
@@ -13,21 +13,21 @@ describe ParamParam.bool do
     _, errors = rules.call({})
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::NON_BOOL, errors[:field])
+    assert_equal(PPX::NON_BOOL, errors[:field])
   end
 
   it 'complains for nil' do
     _, errors = rules.call(field: nil)
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::NON_BOOL, errors[:field])
+    assert_equal(PPX::NON_BOOL, errors[:field])
   end
 
   it 'complains for None' do
     _, errors = rules.call(field: Optiomist.none)
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::NON_BOOL, errors[:field])
+    assert_equal(PPX::NON_BOOL, errors[:field])
   end
 
   it 'is true for true' do

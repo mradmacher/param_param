@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require 'test_std_helper'
 
-describe ParamParam.decimal do
+describe 'ParamParam::Std.decimal' do
   let(:rules) do
-    ParamParam.define.call(
-      field: ParamParam.decimal.call(ParamParam.any),
+    PPX.define.(
+      field: PPX.decimal.(PPX.any),
     )
   end
 
@@ -13,21 +13,21 @@ describe ParamParam.decimal do
     _, errors = rules.call({})
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::NON_DECIMAL, errors[:field])
+    assert_equal(PPX::NON_DECIMAL, errors[:field])
   end
 
   it 'complains for nil' do
     _, errors = rules.call(field: nil)
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::NON_DECIMAL, errors[:field])
+    assert_equal(PPX::NON_DECIMAL, errors[:field])
   end
 
   it 'complains for None' do
     _, errors = rules.call(field: Optiomist.none)
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::NON_DECIMAL, errors[:field])
+    assert_equal(PPX::NON_DECIMAL, errors[:field])
   end
 
   it 'accepts decimal values' do

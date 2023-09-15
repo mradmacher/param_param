@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require 'test_std_helper'
 
-describe ParamParam.stripped do
+describe 'ParamParam::Std.stripped' do
   let(:rules) do
-    ParamParam.define.call(
-      field: ParamParam.stripped,
+    PPX.define.(
+      field: PPX.stripped,
     )
   end
 

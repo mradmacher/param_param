@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require 'test_std_helper'
 
-describe ParamParam.max_size do
+describe 'ParamParam::Std.max_size' do
   let(:rules) do
-    ParamParam.define.call(
-      field: ParamParam.max_size.call(10),
+    PPX.define.(
+      field: PPX.max_size.(10),
     )
   end
 
@@ -27,7 +27,7 @@ describe ParamParam.max_size do
     _, errors = rules.call(field: '12345678910')
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::TOO_LONG, errors[:field])
+    assert_equal(PPX::TOO_LONG, errors[:field])
   end
 
   it 'accepts arrays not longer than required size' do
@@ -48,6 +48,6 @@ describe ParamParam.max_size do
     _, errors = rules.call(field: %w[0 1 2 3 4 5 6 7 8 9 10])
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::TOO_LONG, errors[:field])
+    assert_equal(PPX::TOO_LONG, errors[:field])
   end
 end

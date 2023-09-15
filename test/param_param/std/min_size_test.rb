@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require 'test_std_helper'
 
-describe ParamParam.min_size do
+describe 'ParamParam::Std.min_size' do
   let(:rules) do
-    ParamParam.define.call(
-      field: ParamParam.min_size.call(2),
+    PPX.define.(
+      field: PPX.min_size.(2),
     )
   end
 
@@ -27,7 +27,7 @@ describe ParamParam.min_size do
     _, errors = rules.call(field: '1')
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::TOO_SHORT, errors[:field])
+    assert_equal(PPX::TOO_SHORT, errors[:field])
   end
 
   it 'accepts arrays not shorter than required size' do
@@ -48,6 +48,6 @@ describe ParamParam.min_size do
     _, errors = rules.call(field: %w[1])
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::TOO_SHORT, errors[:field])
+    assert_equal(PPX::TOO_SHORT, errors[:field])
   end
 end

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require 'test_std_helper'
 
-describe ParamParam.optional do
+describe 'ParamParam::Std.optional' do
   let(:rules) do
-    ParamParam.define.call(
-      field: ParamParam.optional.call(ParamParam.any),
+    PPX.define.(
+      field: PPX.optional.(PPX.any),
     )
   end
 

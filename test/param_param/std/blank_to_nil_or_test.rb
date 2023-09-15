@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require 'test_std_helper'
 
-describe ParamParam.blank_to_nil_or do
+describe 'ParamParam::Std.blank_to_nil_or' do
   let(:rules) do
-    ParamParam.define.call(
-      field: ParamParam.blank_to_nil_or.call(ParamParam.any),
+    PPX.define.(
+      field: PPX.blank_to_nil_or.(PPX.any),
     )
   end
 

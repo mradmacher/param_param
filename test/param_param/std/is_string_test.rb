@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require 'test_std_helper'
 
-describe ParamParam.string do
+describe 'ParamParam::Std.string' do
   let(:rules) do
-    ParamParam.define.call(
-      field: ParamParam.string.call(ParamParam.any),
+    PPX.define.(
+      field: PPX.string.(PPX.any),
     )
   end
 
@@ -13,7 +13,7 @@ describe ParamParam.string do
     _, errors = rules.call({})
 
     refute_predicate(errors, :empty?)
-    assert_equal ParamParam::NON_STRING, errors[:field]
+    assert_equal PPX::NON_STRING, errors[:field]
   end
 
   it 'converts nil to empty string' do
@@ -27,7 +27,7 @@ describe ParamParam.string do
     _, errors = rules.call(field: Optiomist.none)
 
     refute_predicate(errors, :empty?)
-    assert_equal ParamParam::NON_STRING, errors[:field]
+    assert_equal PPX::NON_STRING, errors[:field]
   end
 
   it 'converts numbers to strings' do
