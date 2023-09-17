@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 module ParamParam
-  # It defines some functions that can be useful in everyday life to define rules.
+  # It defines some actions that can be useful in an everyday life.
   module Std
     def self.included(base)
       base.include(Messages)
-      base.extend(Functions)
+      base.extend(Actions)
     end
 
     # Some string values that can be considered as +true+ (thank you dry-rb for inspiration).
@@ -32,8 +32,8 @@ module ParamParam
       NON_STRING = :non_string
     end
 
-    # Functions definitions.
-    module Functions
+    # Actions definitions.
+    module Actions
       # Verifies inclusion of a value in a collection.
       #
       # Returns

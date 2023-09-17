@@ -1,69 +1,80 @@
 # param_param
 Params parser built on lambdas.
+It allows to define pipelines that transform hash values.
 
 Inspired by Martin Chabot's [Simple Functional Strong Parameters In Ruby](https://blog.martinosis.com/blog/simple-functional-strong-params-in-ruby) article.
 
 # Examples
-An example usage is to process form data in a web application, converting
-user provided data to values understood by the application and validating
-if the data fulfills constraints required by the application.
+An example usage is to process form data in a web application,
+validating and transforming user provided data.
 
-## With a dedicated class:
+## A class example:
 ```
 class UserParams
   include ParamParam
   include ParamParam::Std
 
+  # You can add your own actions
+  capitalized = ->(option) { Success.new(Optiomist.some(option.value.capitalize)) }
+
   RULES = define.(
     name: required.(
-      string.(all_of.([not_nil, stripped, max_size.(50)]))
+      string.(all_of.([not_blank, max_size.(50), capitalized]))
     ),
     admin: required.(bool.(any)),
     age: optional.(integer.(gt.(0))),
   )
 
-  def verify(params)
+  def process(params)
     RULES.(params)
   end
 end
 
-class UserOperation
-  def create(raw_params)
-    params, errors = UserParams.new.verify(raw_params)
-    throw errors unless errors.empty?
+raw_params = { name: 'JOHN', admin: '0', age: '30', race: 'It is not important' }
+params, errors = UserParams.new.process(
+  name: 'JOHN',
+  admin: '0',
+  age: '30',
+  race: 'It is not important',
+)
+params # {:name=>"John", :admin=>false, :age=>30}
+errors # {}
 
-    # do something with params
-  end
-end
+params, errors = UserParams.new.process(admin: 'no', age: 'very old')
+params # {:admin=>false}
+errors # {:name=>:missing, :age=>:non_integer}
 ```
 
-## A standalone example:
+## A module example:
 ```
 module PP
   include ParamParam
   include ParamParam::Std
-end
 
-class UserOperation
-  RULES = PP.define.(
-    name: PP.required.(
-      PP.string.(
-        PP.all_of.([
-          PP.not_nil,
-          PP.stripped,
-          PP.max_size.(50)
-        ])
-      )
-    ),
-    admin: PP.required.(PP.bool.(PP.any)),
-    age: PP.optional.(PP.integer.(PP.gt.(0))),
-  )
-
-  def create(raw_params)
-    params, errors = RULES.(raw_params)
-    throw errors unless errors.empty?
-
-    # do something with params
+  # You can add your own actions
+  def self.capitalized
+    ->(option) { Success.new(Optiomist.some(option.value.capitalize)) }
   end
 end
+
+rules = PP.define.(
+  name: PP.required.(
+    PP.string.(PP.all_of.([PP.not_blank, PP.max_size.(50), PP.capitalized]))
+  ),
+  admin: PP.required.(PP.bool.(PP.any)),
+  age: PP.optional.(PP.integer.(PP.gt.(0))),
+)
+
+params, errors = rules.(
+  name: 'JOHN',
+  admin: '0',
+  age: '30',
+  race: 'It is not important',
+)
+params # {:name=>"John", :admin=>false, :age=>30}
+errors # {}
+
+params, errors = rules.(admin: 'no', age: 'very old')
+params # {:admin=>false}
+errors # {:name=>:missing, :age=>:non_integer}
 ```

@@ -3,22 +3,22 @@
 require 'optiomist'
 require 'param_param/result'
 
-# It provides functionality to define a collection of rules that can convert values in a hash.
+# It allows to define pipelines that transform hash values.
 #
-# Each rule is bound to a particular key and processes a value related to that key.
-# A rule consists of a chain of functions that are processed one by one.
-# A functions receives a value and is expected to return successful or failed result.
+# Each pipeline is bound to a particular key and processes a value related to that key.
+# A pipeline consists of a chain of actions that are executed one by one.
+# An actions receives a value from a previous action and is expected to return successful or failed result.
 # A successful result contains a new value being the result of the processing.
-# The new value is passed further in the chain to the next function.
-# Failed result contains a message from the function saying why a particular value can't be processed.
-# The following formulas in the chain are not executed.
+# The new value is passed further in the chain to the next action.
+# A failed result contains a message from an action saying why a particular value can't be processed.
+# Following actions in the chain are not executed.
 module ParamParam
   def self.included(base)
-    base.extend(Functions)
+    base.extend(Actions)
   end
 
-  # Functions definitions.
-  module Functions
+  # Actions definitions.
+  module Actions
     # Converts provided value to +Optiomist::Some+.
     # If the value is already +Optiomist::Some+ or +Optiomist::None+ returns it untouched.
     def optionize(value)
@@ -29,18 +29,18 @@ module ParamParam
       end
     end
 
-    # Returns lambda that allows defining a set of rules and bind them to symbols.
-    # Later those rules can be applied to parameters provided in a for of a hash.
-    # Each rule defined for a given key processes a value related to the same key in provided parameters.
+    # Defines pipelines and binds them to symbols.
+    # Pipelines are used to process parameters provided in a form of a hash.
+    # Each pipeline is defined for a key and processes a value related to that key in provided parameters.
     #   lambda { |rules, params| ... }
     #
     # The lambda returns two hashes:
-    # - if a value related to a key can be procesed by the rules,
+    # - if a value related to a key can be procesed by an action,
     #   the result is bound to the key and added to the first hash
-    # - if a rule can't be applied to a value,
+    # - if a value related to a key can't be processed by an action,
     #   the error is bound to the key and added to the second hash
     #
-    # Each rule needs to be a lambda taking +Optiomist+ as the only or the last parameter and returning either:
+    # Each action needs to be a lambda taking +Optiomist+ as the only or the last parameter and returning either:
     # - +ParamParam::Success+ with processed option
     # - +ParamParam::Failure+ with an error
     def define
