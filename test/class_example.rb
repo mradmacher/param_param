@@ -13,9 +13,7 @@ class UserParams
   capitalized = ->(option) { Success.new(Optiomist.some(option.value.capitalize)) }
 
   RULES = define.(
-    name: required.(
-      string.(all_of.([not_blank, max_size.(50), capitalized]))
-    ),
+    name: required.(string.(all_of.([not_blank, max_size.(50), capitalized]))),
     admin: required.(bool.(any)),
     age: optional.(integer.(gt.(0))),
   )
@@ -25,7 +23,6 @@ class UserParams
   end
 end
 
-raw_params = { name: 'JOHN', admin: '0', age: '30', race: 'It is not important' }
 params, errors = UserParams.new.process(
   name: 'JOHN',
   admin: '0',

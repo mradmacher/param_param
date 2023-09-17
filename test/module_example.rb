@@ -16,9 +16,7 @@ module PP
 end
 
 rules = PP.define.(
-  name: PP.required.(
-    PP.string.(PP.all_of.([PP.not_blank, PP.max_size.(50), PP.capitalized]))
-  ),
+  name: PP.required.(PP.string.(PP.all_of.([PP.not_blank, PP.max_size.(50), PP.capitalized]))),
   admin: PP.required.(PP.bool.(PP.any)),
   age: PP.optional.(PP.integer.(PP.gt.(0))),
 )

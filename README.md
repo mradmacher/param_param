@@ -18,9 +18,7 @@ class UserParams
   capitalized = ->(option) { Success.new(Optiomist.some(option.value.capitalize)) }
 
   RULES = define.(
-    name: required.(
-      string.(all_of.([not_blank, max_size.(50), capitalized]))
-    ),
+    name: required.(string.(all_of.([not_blank, max_size.(50), capitalized]))),
     admin: required.(bool.(any)),
     age: optional.(integer.(gt.(0))),
   )
@@ -58,9 +56,7 @@ module PP
 end
 
 rules = PP.define.(
-  name: PP.required.(
-    PP.string.(PP.all_of.([PP.not_blank, PP.max_size.(50), PP.capitalized]))
-  ),
+  name: PP.required.(PP.string.(PP.all_of.([PP.not_blank, PP.max_size.(50), PP.capitalized]))),
   admin: PP.required.(PP.bool.(PP.any)),
   age: PP.optional.(PP.integer.(PP.gt.(0))),
 )
