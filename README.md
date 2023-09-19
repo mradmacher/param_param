@@ -5,7 +5,7 @@ It allows to define pipelines that transform hash values.
 Inspired by Martin Chabot's [Simple Functional Strong Parameters In Ruby](https://blog.martinosis.com/blog/simple-functional-strong-params-in-ruby) article.
 
 # Examples
-Validate and transform a user provided data in a web application.
+## Validate and transform a user provided data in a web application.
 
 ```
 require 'param_param'
@@ -29,7 +29,6 @@ class UserParams
   end
 end
 
-raw_params = { name: 'JOHN', admin: '0', age: '30', race: 'It is not important' }
 params, errors = UserParams.new.process(
   name: 'JOHN',
   admin: '0',
@@ -44,7 +43,7 @@ params # {:admin=>false}
 errors # {:name=>:missing, :age=>:non_integer}
 ```
 
-Perform some chain of operations on provided data.
+## Perform some chain of operations on provided data.
 ```
 require 'param_param'
 
