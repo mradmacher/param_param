@@ -5,11 +5,12 @@ It allows to define pipelines that transform hash values.
 Inspired by Martin Chabot's [Simple Functional Strong Parameters In Ruby](https://blog.martinosis.com/blog/simple-functional-strong-params-in-ruby) article.
 
 # Examples
-An example usage is to process form data in a web application,
-validating and transforming user provided data.
+Validate and transform a user provided data in a web application.
 
-## A class example:
 ```
+require 'param_param'
+require 'param_param/std'
+
 class UserParams
   include ParamParam
   include ParamParam::Std
@@ -43,34 +44,40 @@ params # {:admin=>false}
 errors # {:name=>:missing, :age=>:non_integer}
 ```
 
-## A module example:
+Perform some chain of operations on provided data.
 ```
-module PP
-  include ParamParam
-  include ParamParam::Std
+require 'param_param'
 
-  # You can add your own actions
-  def self.capitalized
-    ->(option) { Success.new(Optiomist.some(option.value.capitalize)) }
+module Mather
+  include ParamParam
+
+  def self.add
+    ->(value, option) { Success.new(Optiomist.some(option.value + value)) }.curry
+  end
+
+  def self.mul
+    ->(value, option) { Success.new(Optiomist.some(option.value * value)) }.curry
+  end
+
+  def self.sub
+    ->(value, option) { Success.new(Optiomist.some(option.value - value)) }.curry
   end
 end
 
-rules = PP.define.(
-  name: PP.required.(PP.string.(PP.all_of.([PP.not_blank, PP.max_size.(50), PP.capitalized]))),
-  admin: PP.required.(PP.bool.(PP.any)),
-  age: PP.optional.(PP.integer.(PP.gt.(0))),
+rules = Mather.define.(
+  a: Mather.add.(5),
+  b: Mather.mul.(3),
+  c: Mather.sub.(1),
+  d: Mather.all_of.([Mather.add.(2), Mather.mul.(2), Mather.sub.(2)]),
 )
 
-params, errors = rules.(
-  name: 'JOHN',
-  admin: '0',
-  age: '30',
-  race: 'It is not important',
+params, _ = rules.(
+  a: 0,
+  b: 1,
+  c: 2,
+  d: 3,
 )
-params # {:name=>"John", :admin=>false, :age=>30}
-errors # {}
 
-params, errors = rules.(admin: 'no', age: 'very old')
-params # {:admin=>false}
-errors # {:name=>:missing, :age=>:non_integer}
+params # {:a=>5, :b=>3, :c=>1, :d=>8}
+
 ```
