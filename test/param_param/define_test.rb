@@ -2,12 +2,43 @@
 
 require 'test_helper'
 
+class MyParamParam
+  include ParamParam
+
+  i_will_fail = ->(_option) { ParamParam::Failure.new(:some_reason) }
+  i_will_succeed = ->(option) { ParamParam::Success.new(option) }
+
+  Rules = define.(
+    field1: i_will_fail,
+    field2: i_will_succeed,
+  )
+
+  def execute(params)
+    Rules.(params)
+  end
+end
+
 describe ParamParam do
   let(:i_will_fail) { ->(_option) { ParamParam::Failure.new(:some_reason) } }
   let(:i_will_succeed) { ->(option) { ParamParam::Success.new(option) } }
 
+  it 'can be included in a module/class' do
+    my_pp = MyParamParam.new
+    params, errors = my_pp.execute(
+      field1: 1,
+      field2: 2,
+      field3: 3,
+      field4: 4,
+    )
+
+    assert_equal(%i[field2], params.keys)
+    assert_equal(%i[field1], errors.keys)
+    assert_equal(:some_reason, errors[:field1])
+    assert_equal(2, params[:field2])
+  end
+
   it 'returns params that failed and succeeded' do
-    rules = ParamParam.define.call(
+    rules = PP.define.(
       field1: i_will_fail,
       field2: i_will_succeed,
       field3: i_will_fail,
@@ -29,7 +60,7 @@ describe ParamParam do
   end
 
   it 'returns empty errors when all succeed' do
-    rules = ParamParam.define.call(
+    rules = PP.define.(
       field1: i_will_succeed,
       field2: i_will_succeed,
       field3: i_will_succeed,
@@ -51,7 +82,7 @@ describe ParamParam do
   end
 
   it 'returns empty params when all fail' do
-    rules = ParamParam.define.call(
+    rules = PP.define.(
       field1: i_will_fail,
       field2: i_will_fail,
       field3: i_will_fail,

@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require 'test_std_helper'
 
-describe ParamParam.required do
+describe 'ParamParam::Std.required' do
   let(:rules) do
-    ParamParam.define.call(
-      field: ParamParam.required.call(ParamParam.any),
+    PPX.define.(
+      field: PPX.required.(PPX.any),
     )
   end
 
@@ -13,14 +13,14 @@ describe ParamParam.required do
     _, errors = rules.call(field: Optiomist.none)
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::MISSING, errors[:field])
+    assert_equal(PPX::MISSING, errors[:field])
   end
 
   it 'fails when field is missing' do
     _, errors = rules.call(other_field: 'some value')
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::MISSING, errors[:field])
+    assert_equal(PPX::MISSING, errors[:field])
   end
 
   it 'succeeds when value is nil' do

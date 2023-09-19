@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-require 'test_helper'
+require 'test_std_helper'
 
 describe 'Comparisons' do
   let(:rules) do
-    ParamParam.define.call(
-      field_gte: ParamParam.gte.call(0),
-      field_gt: ParamParam.gt.call(0),
-      field_lte: ParamParam.lte.call(0),
-      field_lt: ParamParam.lt.call(0),
+    PPX.define.(
+      field_gte: PPX.gte.(0),
+      field_gt: PPX.gt.(0),
+      field_lte: PPX.lte.(0),
+      field_lt: PPX.lt.(0),
     )
   end
 
@@ -51,9 +51,9 @@ describe 'Comparisons' do
     )
 
     refute_predicate(errors, :empty?)
-    assert_equal(ParamParam::NOT_GTE, errors[:field_gte])
-    assert_equal(ParamParam::NOT_GT, errors[:field_gt])
-    assert_equal(ParamParam::NOT_LTE, errors[:field_lte])
-    assert_equal(ParamParam::NOT_LT, errors[:field_lt])
+    assert_equal(PPX::NOT_GTE, errors[:field_gte])
+    assert_equal(PPX::NOT_GT, errors[:field_gt])
+    assert_equal(PPX::NOT_LTE, errors[:field_lte])
+    assert_equal(PPX::NOT_LT, errors[:field_lt])
   end
 end
