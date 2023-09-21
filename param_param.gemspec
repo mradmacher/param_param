@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.name        = 'param_param'
   s.version     = '0.0.2'
   s.licenses    = ['MIT']
-  s.summary     = 'Params parser built on lambdas'
+  s.summary     = 'Lambda powered pipelines for hash values'
   s.authors     = ['Michał Radmacher']
   s.email       = 'michal@radmacher.pl'
   s.files       = Dir['lib/**/*.rb']

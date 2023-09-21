@@ -1,6 +1,6 @@
 # param_param
-Params parser built on lambdas.
-It allows to define pipelines that transform hash values.
+Lambda powered pipelines.
+Define pipelines transforming hash values.
 
 Inspired by Martin Chabot's [Simple Functional Strong Parameters In Ruby](https://blog.martinosis.com/blog/simple-functional-strong-params-in-ruby) article.
 
