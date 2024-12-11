@@ -11,72 +11,67 @@ Inspired by Martin Chabot's [Simple Functional Strong Parameters In Ruby](https:
 require 'param_param'
 require 'param_param/std'
 
-class UserParams
+class MyParams
   include ParamParam
   include ParamParam::Std
 
   # You can add your own actions
-  capitalized = ->(option) { Success.new(Optiomist.some(option.value.capitalize)) }
-
-  RULES = define.(
-    name: required.(string.(all_of.([not_blank, max_size.(50), capitalized]))),
-    admin: required.(bool.(any)),
-    age: optional.(integer.(gt.(0))),
-  )
-
-  def process(params)
-    RULES.(params)
-  end
+  CAPITALIZED = ->(option) { Success.new(Optiomist.some(option.value.capitalize)) }
 end
 
-params, errors = UserParams.new.process(
+user_params = MyParams.define do |p|
+  {
+    name: p::REQUIRED.(p::ALL_OF.([p::STRING, p::MIN_SIZE.(1), p::MAX_SIZE.(50), p::CAPITALIZED])),
+    admin: p::REQUIRED.(p::BOOL),
+    age: p::OPTIONAL.(p::ALL_OF.([p::INTEGER, p::GT.(0)])),
+  }
+end
+
+params, errors = user_params.(
   name: 'JOHN',
   admin: '0',
   age: '30',
   race: 'It is not important',
 )
+
 params # {:name=>"John", :admin=>false, :age=>30}
 errors # {}
 
 params, errors = UserParams.new.process(admin: 'no', age: 'very old')
 params # {:admin=>false}
-errors # {:name=>:missing, :age=>:non_integer}
+errors # {:name=>:missing, :age=>:not_integer}
 ```
 
 ## Perform some chain of operations on provided data.
 ```
 require 'param_param'
 
+require 'param_param'
+
 module Mather
   include ParamParam
 
-  def self.add
-    ->(value, option) { Success.new(Optiomist.some(option.value + value)) }.curry
-  end
-
-  def self.mul
-    ->(value, option) { Success.new(Optiomist.some(option.value * value)) }.curry
-  end
-
-  def self.sub
-    ->(value, option) { Success.new(Optiomist.some(option.value - value)) }.curry
-  end
+  ADD = ->(value, option) { Success.new(Optiomist.some(option.value + value)) }.curry
+  MUL = ->(value, option) { Success.new(Optiomist.some(option.value * value)) }.curry
+  SUB = ->(value, option) { Success.new(Optiomist.some(option.value - value)) }.curry
 end
 
-rules = Mather.define.(
-  a: Mather.add.(5),
-  b: Mather.mul.(3),
-  c: Mather.sub.(1),
-  d: Mather.all_of.([Mather.add.(2), Mather.mul.(2), Mather.sub.(2)]),
+rules = Mather.define do |m|
+  {
+    a: m::ADD.(2),
+    b: m::MUL.(2),
+    c: m::SUB.(2),
+    d: m::ALL_OF.([m::ADD.(2), m::MUL.(2), m::SUB.(2)]),
+  }
+end
+
+params, errors = rules.(
+  a: 10,
+  b: 10,
+  c: 10,
+  d: 10,
 )
 
-params, _ = rules.(
-  a: 0,
-  b: 1,
-  c: 2,
-  d: 3,
-)
-
-params # {:a=>5, :b=>3, :c=>1, :d=>8}
-
+params # {:a=>12, :b=>20, :c=>8, :d=>22}
+errors # {}
 ```

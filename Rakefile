@@ -8,9 +8,9 @@ Rake::TestTask.new do |t|
   t.test_files = FileList['test/**/*_test.rb']
 end
 
-namespace :examples do
+namespace :test do
   desc 'Runs all examples'
-  task :run do
+  task :examples do
     FileList['test/examples/*_example.rb'].each do |file|
       puts "#{file}:"
       puts `bundle exec ruby #{file}`
