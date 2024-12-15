@@ -3,7 +3,7 @@
 require 'test_helper'
 require 'param_param/std'
 
-module PPX
+class PPX
   include ParamParam
   include ParamParam::Std
 end

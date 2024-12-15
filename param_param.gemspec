@@ -2,9 +2,9 @@
 
 Gem::Specification.new do |s|
   s.name        = 'param_param'
-  s.version     = '0.1.0'
+  s.version     = '1.0.0'
   s.licenses    = ['MIT']
-  s.summary     = 'Lambda powered pipelines for hash values'
+  s.summary     = 'Lambda powered processing of hash values'
   s.authors     = ['Michał Radmacher']
   s.email       = 'michal@radmacher.pl'
   s.files       = Dir['lib/**/*.rb']

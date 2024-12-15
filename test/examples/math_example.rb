@@ -7,31 +7,25 @@ require 'param_param'
 module Mather
   include ParamParam
 
-  def self.add
-    ->(value, option) { Success.new(Optiomist.some(option.value + value)) }.curry
-  end
-
-  def self.mul
-    ->(value, option) { Success.new(Optiomist.some(option.value * value)) }.curry
-  end
-
-  def self.sub
-    ->(value, option) { Success.new(Optiomist.some(option.value - value)) }.curry
-  end
+  ADD = ->(value, option) { Success.new(Optiomist.some(option.value + value)) }.curry
+  MUL = ->(value, option) { Success.new(Optiomist.some(option.value * value)) }.curry
+  SUB = ->(value, option) { Success.new(Optiomist.some(option.value - value)) }.curry
 end
 
-rules = Mather.define.(
-  a: Mather.add.(5),
-  b: Mather.mul.(3),
-  c: Mather.sub.(1),
-  d: Mather.all_of.([Mather.add.(2), Mather.mul.(2), Mather.sub.(2)]),
-)
+rules = Mather.define do |m|
+  {
+    a: m::ADD.(2),
+    b: m::MUL.(2),
+    c: m::SUB.(2),
+    d: m::ALL_OF.([m::ADD.(2), m::MUL.(2), m::SUB.(2)]),
+  }
+end
 
 params, errors = rules.(
-  a: 0,
-  b: 1,
-  c: 2,
-  d: 3,
+  a: 10,
+  b: 10,
+  c: 10,
+  d: 10,
 )
 p params
 p errors

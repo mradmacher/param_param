@@ -5,25 +5,23 @@ $LOAD_PATH << File.join(__dir__, '..', 'lib')
 require 'param_param'
 require 'param_param/std'
 
-class UserParams
+class MyParams
   include ParamParam
   include ParamParam::Std
 
   # You can add your own actions
-  capitalized = ->(option) { Success.new(Optiomist.some(option.value.capitalize)) }
-
-  RULES = define.(
-    name: required.(string.(all_of.([not_blank, max_size.(50), capitalized]))),
-    admin: required.(bool.(any)),
-    age: optional.(integer.(gt.(0))),
-  )
-
-  def process(params)
-    RULES.(params)
-  end
+  CAPITALIZED = ->(option) { Success.new(Optiomist.some(option.value.capitalize)) }
 end
 
-params, errors = UserParams.new.process(
+user_params = MyParams.define do |p|
+  {
+    name: p::REQUIRED.(p::ALL_OF.([p::STRING, p::MIN_SIZE.(1), p::MAX_SIZE.(50), p::CAPITALIZED])),
+    admin: p::REQUIRED.(p::BOOL),
+    age: p::OPTIONAL.(p::ALL_OF.([p::INTEGER, p::GT.(0)])),
+  }
+end
+
+params, errors = user_params.(
   name: 'JOHN',
   admin: '0',
   age: '30',
@@ -32,6 +30,6 @@ params, errors = UserParams.new.process(
 p params
 p errors
 
-params, errors = UserParams.new.process(admin: 'no', age: 'very old')
+params, errors = user_params.(admin: 'no', age: 'very old')
 p params
 p errors
